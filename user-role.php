@@ -2,18 +2,18 @@
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
 /*
-Plugin Name: User Role
-Description: User Role and IP Check plugin
+Plugin Name: Users Role
+Description: Users Role and IP Check plugin
 Version:     1.0.0
 Author:      KafleG
 Author URI:  http://www.kafleg.com.np
 License:     GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Domain Path: /languages
-Text Domain: user-roles
+Text Domain: users-role
 */
 // Function to get the client IP address
-function get_client_ip() {
+function users_role_get_client_ip() {
     if (getenv('HTTP_CLIENT_IP'))
         $ipaddress = getenv('HTTP_CLIENT_IP');
     else if(getenv('HTTP_X_FORWARDED_FOR'))
@@ -34,9 +34,9 @@ function get_client_ip() {
 add_action('admin_menu', 'users_role_setup_menu');
  
 function users_role_setup_menu(){
-        add_menu_page( 'Users Role Plugin Page', 'Users Role Plugin', 'manage_options', 'test-plugin', 'plugin_settings_page' );
+        add_menu_page( 'Users Role Plugin Page', 'Users Role Plugin', 'manage_options', 'test-plugin', 'users_role_plugin_settings_page' );
 }
-function plugin_settings_page() {
+function users_role_plugin_settings_page() {
 ?>
 <div class="wrap">
 <h1><?php esc_html__('Users Details', 'user-roles'); ?></h1>
@@ -78,9 +78,9 @@ function plugin_settings_page() {
 </div>
 <?php }
 
-function add_user_info_login($user_login, $user){
+function users_role_add_user_info_login($user_login, $user){
     $user_info = $user->data;
-    $ip_address = get_client_ip();
+    $ip_address = users_role_get_client_ip();
 
     $main_array = array(
         'login-ip' => $ip_address,
@@ -89,9 +89,9 @@ function add_user_info_login($user_login, $user){
     );
     update_user_meta( $user_info->ID, 'login_info', $main_array );
 }
-add_action('wp_login', 'add_user_info_login',10,2);
+add_action('wp_login', 'users_role_add_user_info_login',10,2);
 
-function add_user_info_logout() {
+function users_role_add_user_info_logout() {
     $user = wp_get_current_user();
     $user_info = $user->data;
 
@@ -101,4 +101,4 @@ function add_user_info_logout() {
 
     update_user_meta( $user_info->ID, 'login_info', $login_info );
 }
-add_action('clear_auth_cookie', 'add_user_info_logout', 10);
+add_action('clear_auth_cookie', 'users_role_add_user_info_logout', 10);
